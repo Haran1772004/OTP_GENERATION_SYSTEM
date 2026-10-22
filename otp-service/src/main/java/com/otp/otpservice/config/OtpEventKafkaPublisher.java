@@ -36,7 +36,7 @@ public class OtpEventKafkaPublisher {
      */
     @EventListener
     public void publish(OtpEvent event) {
-        kafkaTemplate.send(properties.kafka().topic(),
+        kafkaTemplate.send(properties.getKafkaTopic(),
                 Long.toString(event.userId()), event);
     }
 }

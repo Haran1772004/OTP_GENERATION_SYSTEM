@@ -7,7 +7,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5430/otp_db
     username: otp_user
-    password: otp_pass
+    password: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
   jpa:
     open-in-view: false
     hibernate:
@@ -32,7 +32,7 @@ otp:
   code-length: 6
   ttl: 5m
   max-verify-attempts: 5
-  hmac-secret: ${OTP_HMAC_SECRET:dev-only-secret-change-me}
+  hmac-secret: ${OTP_HMAC_SECRET:?Set OTP_HMAC_SECRET in .env}
   rate-limit:
     max-requests: 3
     window: 10m

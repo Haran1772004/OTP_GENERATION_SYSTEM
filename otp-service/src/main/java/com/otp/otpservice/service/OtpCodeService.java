@@ -31,10 +31,11 @@ public class OtpCodeService {
      * Creates the service.
      *
      * @param properties OTP settings containing the code length and secret
+     * @throws IllegalArgumentException if the HMAC secret is null or blank
      */
     public OtpCodeService(OtpProperties properties) {
         this.properties = properties;
-        String secret = properties.hmacSecret();
+        String secret = properties.getHmacSecret();
         if (secret == null || secret.isBlank()) {
             throw new IllegalArgumentException(
                     "OTP HMAC secret must not be blank");
@@ -49,14 +50,14 @@ public class OtpCodeService {
      * @return the generated code, including any leading zeroes
      */
     public String generate() {
-        int length = properties.codeLength();
+        int length = properties.getCodeLength();
         if (length <= 0) {
             throw new IllegalStateException(
                     "OTP code length must be greater than zero");
         }
 
         StringBuilder code = new StringBuilder(length);
-        for (int index = 0; index < length; index++) {
+        for (int index = 1; index <= length; index++) {
             code.append(random.nextInt(10));
         }
         return code.toString();

@@ -102,15 +102,15 @@ public class OtpService {
 
         String code = codeService.generate();
         String hash = codeService.hash(userId, purpose, code);
-        Instant expiresAt = Instant.now().plus(properties.ttl());
+        Instant expiresAt = Instant.now().plus(properties.getTtl());
         otpRecordRepository.save(
                 new OtpRecord(userId, hash, purpose, channel, expiresAt));
-        otpCache.store(userId, purpose, hash, properties.ttl());
+        otpCache.store(userId, purpose, hash, properties.getTtl());
         auditService.logEvent(userId, AuditEventType.OTP_GENERATED,
                 purpose + " code via " + channel, ipAddress);
 
         eventPublisher.publishEvent(new OtpEvent(userId, channel, target,
-                purpose, code, (int) properties.ttl().toMinutes()));
+                purpose, code, (int) properties.getTtl().toMinutes()));
         return SendOutcome.SENT;
     }
 
@@ -172,7 +172,7 @@ public class OtpService {
         record.recordAttempts((int) attempts);
         auditService.logEvent(userId, AuditEventType.OTP_FAILED,
                 "Wrong " + purpose + " code, try " + attempts, ipAddress);
-        if (attempts >= properties.maxVerifyAttempts()) {
+        if (attempts >= properties.getMaxVerifyAttempts()) {
             record.markFailed();
             otpCache.clear(userId, purpose);
             return VerifyOutcome.TOO_MANY_ATTEMPTS;
@@ -181,14 +181,13 @@ public class OtpService {
     }
 
     private void expirePendingCode(long userId, OtpPurpose purpose) {
-        otpRecordRepository
-                .findByUserIdAndPurposeAndStatus(
-                        userId, purpose, OtpStatus.PENDING)
-                .ifPresent(old -> {
-                    old.markExpired();
-                    // Flush now so the old row is no longer PENDING when
-                    // the new row is inserted (unique index on PENDING).
-                    otpRecordRepository.saveAndFlush(old);
-                });
+          Optional<OtpRecord> pending = otpRecordRepository
+            .findByUserIdAndPurposeAndStatus(
+                    userId, purpose, OtpStatus.PENDING);
+    if (pending.isPresent()) {
+        OtpRecord old = pending.get();
+        old.markExpired();
+        otpRecordRepository.saveAndFlush(old);
+    }
     }
 }

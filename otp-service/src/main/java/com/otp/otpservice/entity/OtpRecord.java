@@ -176,6 +176,7 @@ public class OtpRecord {
      * Records the number of failed verification attempts.
      *
      * @param attempts the number of attempts made
+     * @throws IllegalArgumentException if the count is negative or too large
      */
     public void recordAttempts(int attempts) {
         if (attempts < 0 || attempts > Short.MAX_VALUE) {

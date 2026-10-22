@@ -61,7 +61,7 @@ public class OtpController {
         }
         return ResponseEntity.ok(new MessageResponse(
                 "Code sent. It expires in "
-                        + properties.ttl().toMinutes() + " minutes."));
+                        + properties.getTtl().toMinutes() + " minutes."));
     }
 
     /**

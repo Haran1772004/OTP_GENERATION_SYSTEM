@@ -22,7 +22,7 @@ public class KafkaTopicConfig {
      */
     @Bean
     public NewTopic otpEventsTopic(OtpProperties properties) {
-        return TopicBuilder.name(properties.kafka().topic())
+        return TopicBuilder.name(properties.getKafkaTopic())
                 .partitions(1)
                 .replicas(1)
                 .build();

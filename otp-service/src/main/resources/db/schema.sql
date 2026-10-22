@@ -7,7 +7,7 @@ CREATE TYPE audit_event_type AS ENUM (
     'OTP_FAILED', 'OTP_EXPIRED', 'OTP_RATE_LIMITED'
 );
 
--- 1. users
+
 CREATE TABLE users (
     id          BIGSERIAL    PRIMARY KEY,
     email       VARCHAR(255) UNIQUE,
@@ -16,7 +16,7 @@ CREATE TABLE users (
     CONSTRAINT users_contact_chk CHECK (email IS NOT NULL OR phone IS NOT NULL)
 );
 
--- 2. otp_records
+
 CREATE TABLE otp_records (
     id           BIGSERIAL    PRIMARY KEY,
     user_id      BIGINT       NOT NULL REFERENCES users(id),
@@ -35,13 +35,12 @@ CREATE TABLE otp_records (
 CREATE INDEX idx_otp_lookup  ON otp_records (user_id, purpose, status);
 CREATE INDEX idx_otp_expires ON otp_records (expires_at);
 
--- Only one live (PENDING) code per user and purpose.
--- Mark the old code EXPIRED before creating a new one.
+
 CREATE UNIQUE INDEX uq_otp_one_pending
     ON otp_records (user_id, purpose)
     WHERE status = 'PENDING';
 
--- 3. audit_logs
+
 CREATE TABLE audit_logs (
     id          BIGSERIAL        PRIMARY KEY,
     user_id     BIGINT           REFERENCES users(id),

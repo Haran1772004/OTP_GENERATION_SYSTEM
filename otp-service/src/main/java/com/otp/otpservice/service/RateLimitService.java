@@ -45,8 +45,8 @@ public class RateLimitService {
             return false;
         }
         if (count == 1L) {
-            redis.expire(key, properties.rateLimit().window());
+            redis.expire(key, properties.getRateLimitWindow());
         }
-        return count <= properties.rateLimit().maxRequests();
+        return count <= properties.getRateLimitMaxRequests();
     }
 }
