@@ -1,0 +1,40 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: otp-service
+  datasource:
+    url: jdbc:postgresql://localhost:5430/otp_db
+    username: otp_user
+    password: otp_pass
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  kafka:
+    bootstrap-servers: localhost:9090
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
+otp:
+  code-length: 6
+  ttl: 5m
+  max-verify-attempts: 5
+  hmac-secret: ${OTP_HMAC_SECRET:dev-only-secret-change-me}
+  rate-limit:
+    max-requests: 3
+    window: 10m
+  kafka:
+    topic: otp-events
