@@ -52,7 +52,8 @@ services:
   otp-service:
     build:
       context: .
-      dockerfile: Dockerfile.otp-service
+      dockerfile: Dockerfile
+      target: otp-service
     container_name: otp-service
     ports:
       - "8080:8080"
@@ -78,7 +79,8 @@ services:
   notification-service:
     build:
       context: .
-      dockerfile: Dockerfile.notification-service
+      dockerfile: Dockerfile
+      target: notification-service
     container_name: notification-service
     environment:
       KAFKA_HOST: kafka
