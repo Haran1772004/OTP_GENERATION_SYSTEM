@@ -33,14 +33,14 @@ public class RecipientValidator {
         String value = recipient.trim();
         if (channel == OtpChannel.EMAIL) {
             value = value.toLowerCase(Locale.ROOT);
-            if (!EMAIL.matches(value)) {
+            if (!value.matches(EMAIL)) {
                 throw new InvalidRecipientException("Invalid email address");
             }
             return value;
         }
 
         value = value.replace(" ", "");
-        if (!PHONE.matches(value)) {
+        if (!value.matches(PHONE)) {
             throw new InvalidRecipientException("Invalid phone number");
         }
         return value;
